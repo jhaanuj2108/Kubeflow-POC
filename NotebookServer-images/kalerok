@@ -1,0 +1,26 @@
+
+# Use tensorflow-1.14.0 based image with Rok as a base image
+FROM gcr.io/arrikto-public/tensorflow-1.14.0-notebook-cpu:kubecon-workshop
+
+USER root
+
+RUN pip install pandas
+RUN pip install seaborn
+RUN pip install scikit-learn
+RUN pip install --upgrade pip
+
+
+RUN pip install jupyterlab
+RUN pip install https://storage.googleapis.com/ml-pipeline/release/latest/kfp.tar.gz --upgrade
+
+# Install Kale python package globally
+RUN pip install kubeflow-kale
+
+# Install Kale JupyterLab extension
+RUN jupyter labextension install kubeflow-kale-launcher
+ENV NB_PREFIX /
+CMD ["sh", "-c", \
+     "jupyter lab --notebook-dir=/home/jovyan --ip=0.0.0.0 --no-browser \
+      --allow-root --port=8888 --LabApp.token='' --LabApp.password='' \
+      --LabApp.allow_origin='*' --LabApp.base_url=${NB_PREFIX}"]
+
